@@ -9,16 +9,8 @@ import (
 	"database/sql"
 
 	"github.com/gomodule/redigo/redis"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
-
-func init() {
-	err := godotenv.Load(os.ExpandEnv(".env"))
-	if err != nil {
-		log.Fatal("Could not load .env file!")
-	}
-}
 
 func main() {
 
