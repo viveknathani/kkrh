@@ -1,4 +1,4 @@
-name: lint-go
+name: lint
 on:
   push:
     tags:
