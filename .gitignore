@@ -1,0 +1,15 @@
+# server binary
+bin/
+
+# config
+.env
+
+# frontend
+web/node_modules/
+web/build/
+
+# misc
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

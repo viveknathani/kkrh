@@ -1,0 +1,23 @@
+name: lint-go
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - [master, dev]
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          args: --out-${NO_FUTURE}format=tab
+          version: latest
+          only-new-issues: true
