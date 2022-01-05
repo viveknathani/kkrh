@@ -30,6 +30,7 @@ func TestGetAndSet(t *testing.T) {
 
 	// Get a value that does not exist
 	dne, err := Get(conn, "dne")
+	handleError(err)
 	if dne != nil {
 		log.Fatal("Getting something that does not exist.")
 	}
