@@ -8,7 +8,7 @@ import (
 func TestInitializeAndClose(t *testing.T) {
 
 	db := &Database{}
-	dsn := "postgres://viveknathani:root@localhost:5432/kkrhdb"
+	dsn := "postgres://viveknathani:root@localhost:5432/kkrhdb?sslmode=disable"
 	err := db.Initialize(dsn)
 	if err != nil {
 		log.Fatal(err)
