@@ -1,4 +1,4 @@
-package model
+package entity
 
 type Log struct {
 	Id        string  `json:"id"`
