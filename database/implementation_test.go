@@ -18,10 +18,21 @@ func TestMain(t *testing.M) {
 
 	db = &Database{}
 	err := db.Initialize(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// create tables
+	_, err = db.pool.Exec("create table if not exists users(id uuid primary key,name varchar not null,email varchar(319) not null,password bytea not null);")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.pool.Exec("create table if not exists logs(id uuid primary key,userId uuid references users(id),latitude double precision,longitude double precision,activity varchar not null,startTime bigint not null,endTime bigint not null,notes varchar);")
 	code := t.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	db.Close()
 	os.Exit(code)
 }
