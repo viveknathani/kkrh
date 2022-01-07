@@ -7,9 +7,9 @@ import (
 // Cache contains the connection pool for Redis.
 // Server should call Initialize before usage and
 // each goroutine should work on a new connection
-// using pool.Get().
+// using Pool.Get().
 type Cache struct {
-	pool *redis.Pool
+	Pool *redis.Pool
 }
 
 // Initialize will set up the connection pool so that
@@ -26,12 +26,12 @@ func (cache *Cache) Initialize(url string) {
 			return nil, err
 		},
 	}
-	cache.pool = pool
+	cache.Pool = pool
 }
 
 // Close will free up all the resources of the pool.
 func (cache *Cache) Close() error {
-	return cache.pool.Close()
+	return cache.Pool.Close()
 }
 
 // Get is a generic method to do the obvious.
