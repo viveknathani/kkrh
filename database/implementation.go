@@ -15,6 +15,8 @@ const (
 	statementInsertLog                    = "insert into logs (id, userId, latitude, longitude, activity, startTime, endTime, notes) values ($1, $2, $3, $4, $5, $6, $7, $8);"
 	statementSelectLogsFromUserAndEndTime = "select * from logs where userId = $1 and endTime = $2;"
 	statementUpdateLogsWithIdAndEndTime   = "update logs set endTime = $1 where id = $2;"
+	statementDeleteUser                   = "delete from users where id = $1;"
+	statementDeleteLog                    = "delete from logs where id = $1;"
 )
 
 // CreateUser will create a new user in the database and will
@@ -94,4 +96,15 @@ func (db *Database) GetLogs(userID string, endTime int64) (*[]entity.Log, error)
 	}
 
 	return &result, nil
+}
+
+// DeleteUser will delete a user specified by userId.
+func (db *Database) DeleteUser(id string) error {
+	return db.execWithTransaction(statementDeleteUser, id)
+}
+
+// DeleteLog will delete a user specified by logId.
+func (db *Database) DeleteLog(id string) error {
+
+	return db.execWithTransaction(statementDeleteLog, id)
 }

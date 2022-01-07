@@ -11,6 +11,9 @@ type userRepository interface {
 
 	// GetUser will fetch the first found user from the database.
 	GetUser(email string) (*entity.User, error)
+
+	// DeleteUser will delete a user specified by userId.
+	DeleteUser(id string) error
 }
 
 // logRepository is the method set to operate on the Log entity.
@@ -27,6 +30,9 @@ type logRepository interface {
 	// GetLogs will fetch all logs for the user where stopTime matches the
 	// given endTime.
 	GetLogs(userID string, endTime int64) (*[]entity.Log, error)
+
+	// DeleteLog will delete a user specified by logId.
+	DeleteLog(id string) error
 }
 
 // Repository encapsulates the method set for all entities.

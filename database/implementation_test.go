@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -70,7 +69,7 @@ func TestCreateAndGetUser(t *testing.T) {
 	}
 
 	// clean up
-	err = db.execWithTransaction("delete from users where name = 'john'")
+	err = db.DeleteUser(u.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -144,13 +143,13 @@ func TestCreateAndGetLogs(t *testing.T) {
 			log.Fatal("Inequality")
 		}
 
-		err = db.execWithTransaction(fmt.Sprintf("delete from logs where id='%s'", item.Id))
+		err = db.DeleteLog(item.Id)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	err = db.execWithTransaction("delete from users where name = 'forlogs'")
+	err = db.DeleteUser(u.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
