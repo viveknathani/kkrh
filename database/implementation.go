@@ -30,6 +30,7 @@ func (db *Database) CreateUser(u *entity.User) error {
 func (db *Database) GetUser(email string) (*entity.User, error) {
 
 	var u entity.User
+	exists := false
 	err := db.queryWithTransaction(statementSelectUserFromEmail, func(rows *sql.Rows) error {
 
 		//We iterate only once since we are interested in the first occurence
@@ -38,12 +39,17 @@ func (db *Database) GetUser(email string) (*entity.User, error) {
 			if err != nil {
 				return err
 			}
+			exists = true
 		}
 		return nil
 	}, email)
 
 	if err != nil {
 		return nil, err
+	}
+
+	if !exists {
+		return nil, nil
 	}
 	return &u, nil
 }
