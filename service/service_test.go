@@ -8,6 +8,8 @@ import (
 	"github.com/viveknathani/kkrh/cache"
 	"github.com/viveknathani/kkrh/database"
 	"github.com/viveknathani/kkrh/entity"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 const dsn = "postgres://viveknathani:root@localhost:5432/kkrhdb?sslmode=disable"
@@ -28,11 +30,33 @@ func TestMain(t *testing.M) {
 	service.repo = db
 	service.conn = c.Pool.Get()
 	service.jwtSecret = []byte("secret")
+	cfg := zap.Config{
+		Encoding:         "json",
+		Level:            zap.NewAtomicLevel(),
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
+		EncoderConfig: zapcore.EncoderConfig{
+			MessageKey:  "message",
+			LevelKey:    "level",
+			EncodeLevel: zapcore.CapitalLevelEncoder,
+			TimeKey:     "ts",
+			EncodeTime:  zapcore.EpochMillisTimeEncoder,
+		},
+	}
+	logger, _ := cfg.Build()
+	if err != nil {
+		log.Fatal(err)
+	}
+	service.logger = logger
 	code := t.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
 	db.Close()
+	err = logger.Sync()
+	if err != nil {
+		log.Fatal(err)
+	}
 	os.Exit(code)
 }
 

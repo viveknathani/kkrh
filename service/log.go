@@ -1,8 +1,6 @@
 package service
 
 import (
-	"log"
-
 	"github.com/viveknathani/kkrh/entity"
 )
 
@@ -12,11 +10,14 @@ func (service *Service) CreateLog(l *entity.Log) error {
 	if !isValidLog(l, false) {
 		return ErrInvalidLog
 	}
+
+	service.logger.Info("Inserting log into database.")
 	err := service.repo.CreateLog(l)
 	if err != nil {
-		log.Print(err)
+		service.logger.Error(err.Error())
 		return ErrNoLogInsert
 	}
+	service.logger.Info("Log inserted.")
 	return nil
 }
 
@@ -28,22 +29,26 @@ func (service *Service) StartLog(l *entity.Log) error {
 	if !isValidLog(l, true) {
 		return ErrInvalidLog
 	}
+	service.logger.Info("Inserting log into database.")
 	err := service.repo.CreateLog(l)
 	if err != nil {
-		log.Print(err)
+		service.logger.Error(err.Error())
 		return ErrNoLogInsert
 	}
+	service.logger.Info("Log inserted.")
 	return nil
 }
 
 // EndLog will update a log's endTime
 func (service *Service) EndLog(id string, endTime int64) error {
 
+	service.logger.Info("Updating log in database.")
 	err := service.repo.UpdateLog(id, endTime)
 	if err != nil {
-		log.Print(err)
+		service.logger.Error(err.Error())
 		return ErrNoLogUpdate
 	}
+	service.logger.Info("Log updated.")
 	return nil
 }
 

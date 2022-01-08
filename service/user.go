@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/mail"
 	"time"
 	"unicode"
@@ -27,14 +26,17 @@ func (service *Service) Signup(u *entity.User) error {
 
 	_, err := mail.ParseAddress(u.Email)
 	if err != nil {
-		log.Print(err)
+		service.logger.Error(err.Error())
 		return ErrInvalidEmailFormat
 	}
 
+	service.logger.Info("Checking for email in the database.")
 	user, err := service.repo.GetUser(u.Email)
+	service.logger.Info("Got back from the database after check.")
 	if err != nil {
 		return err
 	}
+
 	if user != nil {
 		return ErrEmailExists
 	}
@@ -45,13 +47,15 @@ func (service *Service) Signup(u *entity.User) error {
 
 	hash, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
 	if err != nil {
-		log.Print(err)
+		service.logger.Error(err.Error())
 		return errors.New("bcrypt error, check logs")
 	}
 
 	u.Password = hash
 
+	service.logger.Info("All good, inserting user.")
 	err = service.repo.CreateUser(u)
+	service.logger.Info("Got back from the database after insert query.")
 	if err != nil {
 		return err
 	}
@@ -65,7 +69,9 @@ func (service *Service) Login(u *entity.User) (string, error) {
 		return "", ErrNilUser
 	}
 
+	service.logger.Info("Checking for email in the database.")
 	user, err := service.repo.GetUser(u.Email)
+	service.logger.Info("Got back from the database after check.")
 	if err != nil {
 		return "", err
 	}
@@ -95,9 +101,11 @@ func (service *Service) createToken(id string) (string, error) {
 // VerifyAndDecodeToken will get the payload we need if the token is valid.
 func (service *Service) VerifyAndDecodeToken(token string) (string, error) {
 
+	service.logger.Info("Searching for token in cache.")
 	if service.isBlacklistedToken(token) {
 		return "", ErrInvalidToken
 	}
+	service.logger.Info("Passed searching. Parsing token.")
 
 	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 
@@ -111,7 +119,7 @@ func (service *Service) VerifyAndDecodeToken(token string) (string, error) {
 		return claims["id"].(string), nil
 	}
 
-	log.Print(err)
+	service.logger.Error(err.Error())
 	return "", ErrInvalidToken
 }
 
@@ -149,7 +157,14 @@ func isValidPassword(password string) bool {
 
 // Logout will put the JWT in the cache which acts as a blacklist.
 func (service *Service) Logout(token string) error {
-	return service.blacklistToken(token)
+
+	service.logger.Info("Attempt to blacklist token.")
+	err := service.blacklistToken(token)
+	if err != nil {
+		return err
+	}
+	service.logger.Info("Blacklisted token.")
+	return nil
 }
 
 func (service *Service) blacklistToken(token string) error {
@@ -160,7 +175,7 @@ func (service *Service) blacklistToken(token string) error {
 func (service *Service) isBlacklistedToken(token string) bool {
 	res, err := cache.Get(service.conn, token)
 	if err != nil {
-		log.Print(err)
+		service.logger.Error(err.Error())
 		return false
 	}
 	return string(res) == "true"
