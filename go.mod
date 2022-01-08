@@ -9,3 +9,9 @@ require (
 	github.com/lib/pq v1.10.4
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 )
+
+require (
+	go.uber.org/atomic v1.9.0 // indirect
+	go.uber.org/multierr v1.7.0 // indirect
+	go.uber.org/zap v1.20.0 // indirect
+)
