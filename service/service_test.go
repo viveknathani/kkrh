@@ -53,10 +53,7 @@ func TestMain(t *testing.M) {
 		log.Fatal(err)
 	}
 	db.Close()
-	err = logger.Sync()
-	if err != nil {
-		log.Fatal(err)
-	}
+	_ = logger.Sync()
 	os.Exit(code)
 }
 
