@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"errors"
 
 	_ "github.com/lib/pq"
 )
@@ -49,9 +49,9 @@ func (db *Database) queryWithTransaction(prepared string, scanRows func(rows *sq
 
 	rows, err := transaction.Stmt(statement).Query(args...)
 	if err != nil {
-		rollbackError := transaction.Rollback()
-		if rollbackError != nil {
-			log.Println(rollbackError)
+		rollError := transaction.Rollback()
+		if rollError != nil {
+			return errors.New(err.Error() + " " + rollError.Error())
 		}
 		return err
 	}
@@ -85,14 +85,13 @@ func (db *Database) execWithTransaction(prepared string, args ...interface{}) er
 	if err != nil {
 		rollError := transaction.Rollback()
 		if rollError != nil {
-			log.Print(rollError)
+			return errors.New(err.Error() + " " + rollError.Error())
 		}
 		return err
 	}
 
 	err = transaction.Commit()
 	if err != nil {
-		log.Print(err)
 		return err
 	}
 
