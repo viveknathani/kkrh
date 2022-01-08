@@ -1,3 +1,4 @@
+// +heroku goVersion go1.17
 module github.com/viveknathani/kkrh
 
 go 1.17
