@@ -27,9 +27,9 @@ func TestMain(t *testing.M) {
 		log.Fatal(err)
 	}
 	c.Initialize(redisurl)
-	service.repo = db
-	service.conn = c.Pool.Get()
-	service.jwtSecret = []byte("secret")
+	service.Repo = db
+	service.Conn = c.Pool.Get()
+	service.JwtSecret = []byte("secret")
 	cfg := zap.Config{
 		Encoding:         "json",
 		Level:            zap.NewAtomicLevel(),
@@ -47,7 +47,7 @@ func TestMain(t *testing.M) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	service.logger = logger
+	service.Logger = logger
 	code := t.Run()
 	if err != nil {
 		log.Fatal(err)
@@ -95,7 +95,7 @@ func TestUserAuth(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	err = service.repo.DeleteUser(u.Id)
+	err = service.Repo.DeleteUser(u.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -129,12 +129,12 @@ func TestCreateLog(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	err = service.repo.DeleteLog(l.Id)
+	err = service.Repo.DeleteLog(l.Id)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = service.repo.DeleteUser(u.Id)
+	err = service.Repo.DeleteUser(u.Id)
 	if err != nil {
 		log.Fatal(err)
 	}

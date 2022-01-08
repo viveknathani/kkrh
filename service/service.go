@@ -7,8 +7,8 @@ import (
 )
 
 type Service struct {
-	repo      repository.Repository
-	conn      redis.Conn
-	jwtSecret []byte
-	logger    *zap.Logger
+	Repo      repository.Repository
+	Conn      redis.Conn
+	JwtSecret []byte
+	Logger    *zap.Logger
 }

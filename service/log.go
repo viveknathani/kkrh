@@ -11,13 +11,13 @@ func (service *Service) CreateLog(l *entity.Log) error {
 		return ErrInvalidLog
 	}
 
-	service.logger.Info("Inserting log into database.")
-	err := service.repo.CreateLog(l)
+	service.Logger.Info("Inserting log into database.")
+	err := service.Repo.CreateLog(l)
 	if err != nil {
-		service.logger.Error(err.Error())
+		service.Logger.Error(err.Error())
 		return ErrNoLogInsert
 	}
-	service.logger.Info("Log inserted.")
+	service.Logger.Info("Log inserted.")
 	return nil
 }
 
@@ -29,26 +29,26 @@ func (service *Service) StartLog(l *entity.Log) error {
 	if !isValidLog(l, true) {
 		return ErrInvalidLog
 	}
-	service.logger.Info("Inserting log into database.")
-	err := service.repo.CreateLog(l)
+	service.Logger.Info("Inserting log into database.")
+	err := service.Repo.CreateLog(l)
 	if err != nil {
-		service.logger.Error(err.Error())
+		service.Logger.Error(err.Error())
 		return ErrNoLogInsert
 	}
-	service.logger.Info("Log inserted.")
+	service.Logger.Info("Log inserted.")
 	return nil
 }
 
 // EndLog will update a log's endTime
 func (service *Service) EndLog(id string, endTime int64) error {
 
-	service.logger.Info("Updating log in database.")
-	err := service.repo.UpdateLog(id, endTime)
+	service.Logger.Info("Updating log in database.")
+	err := service.Repo.UpdateLog(id, endTime)
 	if err != nil {
-		service.logger.Error(err.Error())
+		service.Logger.Error(err.Error())
 		return ErrNoLogUpdate
 	}
-	service.logger.Info("Log updated.")
+	service.Logger.Info("Log updated.")
 	return nil
 }
 
