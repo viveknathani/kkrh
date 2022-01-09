@@ -23,7 +23,7 @@ func sendResponse(w http.ResponseWriter, msg string, code int) error {
 }
 
 func sendClientError(w http.ResponseWriter, msg string) error {
-	return sendResponse(w, msg, 400)
+	return sendResponse(w, msg, http.StatusBadRequest)
 }
 
 func sendServerError(w http.ResponseWriter) error {
@@ -31,9 +31,9 @@ func sendServerError(w http.ResponseWriter) error {
 }
 
 func sendCreated(w http.ResponseWriter) error {
-	return sendResponse(w, "created", 201)
+	return sendResponse(w, "created", http.StatusCreated)
 }
 
 func sendUpdated(w http.ResponseWriter) error {
-	return sendResponse(w, "updated", 204)
+	return sendResponse(w, "updated", http.StatusNoContent)
 }

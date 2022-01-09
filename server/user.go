@@ -101,7 +101,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 
-	if ok := sendResponse(w, "ok", 200); ok != nil {
+	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
 		s.Service.Logger.Error(ok.Error())
 	}
 }
@@ -128,7 +128,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ok := sendResponse(w, "ok", 200); ok != nil {
+	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
 		s.Service.Logger.Error(ok.Error())
 	}
 }

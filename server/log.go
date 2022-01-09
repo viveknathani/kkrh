@@ -101,7 +101,7 @@ func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
 		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		return
 	}
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 	if _, ok := w.Write(data); ok != nil {
 		s.Service.Logger.Error(err.Error(), zapReqID(r))
 	}
