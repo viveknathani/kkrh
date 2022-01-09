@@ -2,11 +2,15 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/viveknathani/kkrh/service"
+	"github.com/viveknathani/kkrh/shared"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // Server holds together all the configuration needed to run this web service.
@@ -15,16 +19,38 @@ type Server struct {
 	Router  *mux.Router
 }
 
-// RequestID will be used in context
-type RequestID string
-
-// UserID will be used in context
-type UserID string
-
 // ServeHTTP is implemented so that Server can be used for listening to requests.
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	requestID := uuid.New().String()
-	request := r.Clone(context.WithValue(context.Background(), RequestID("requestID"), requestID))
+	request := r.Clone(shared.WithRequestID(context.Background(), requestID))
 	s.Router.ServeHTTP(w, request)
+}
+
+func zapReqID(r *http.Request) zapcore.Field {
+
+	return zapcore.Field{
+		Key:    "requestID",
+		String: shared.ExtractRequestID(r.Context()),
+		Type:   zapcore.StringType,
+	}
+}
+
+func showRequestMetaData(l *zap.Logger, r *http.Request) {
+
+	fmt.Println(r.Context())
+
+	reqMethod := zapcore.Field{
+		Key:    "method",
+		String: r.Method,
+		Type:   zapcore.StringType,
+	}
+
+	reqPath := zapcore.Field{
+		Key:    "path",
+		String: r.URL.String(),
+		Type:   zapcore.StringType,
+	}
+
+	l.Info("incoming request", zapReqID(r), reqMethod, reqPath)
 }
