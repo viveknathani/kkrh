@@ -23,7 +23,7 @@ func (s *Server) handleLogStart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.Service.StartLog(&entity.Log{
+	err = s.Service.StartLog(r.Context(), &entity.Log{
 		UserId:    shared.ExtractUserID(r.Context()),
 		Latitude:  l.Latitude,
 		Longitude: l.Longitude,
@@ -71,7 +71,7 @@ func (s *Server) handleLogEnd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.Service.EndLog(l.LogId, l.EndTime)
+	err = s.Service.EndLog(r.Context(), l.LogId, l.EndTime)
 
 	if err != nil {
 		if ok := sendServerError(w); ok != nil {
@@ -88,7 +88,7 @@ func (s *Server) handleLogEnd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
 
 	showRequestMetaData(s.Service.Logger, r)
-	list, err := s.Service.GetPendingLogs(shared.ExtractUserID(r.Context()))
+	list, err := s.Service.GetPendingLogs(r.Context(), shared.ExtractUserID(r.Context()))
 	if err != nil {
 		if ok := sendServerError(w); ok != nil {
 			s.Service.Logger.Error(err.Error(), zapReqID(r))

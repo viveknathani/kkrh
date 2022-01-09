@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/mail"
@@ -18,7 +19,7 @@ const (
 )
 
 // Signup creates a new user in the database if all the checks pass.
-func (service *Service) Signup(u *entity.User) error {
+func (service *Service) Signup(ctx context.Context, u *entity.User) error {
 
 	if u == nil {
 		return ErrNilUser
@@ -26,13 +27,13 @@ func (service *Service) Signup(u *entity.User) error {
 
 	_, err := mail.ParseAddress(u.Email)
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return ErrInvalidEmailFormat
 	}
 
-	service.Logger.Info("Checking for email in the database.")
+	service.Logger.Info("Checking for email in the database.", zapReqID(ctx))
 	user, err := service.Repo.GetUser(u.Email)
-	service.Logger.Info("Got back from the database after check.")
+	service.Logger.Info("Got back from the database after check.", zapReqID(ctx))
 	if err != nil {
 		return err
 	}
@@ -47,15 +48,15 @@ func (service *Service) Signup(u *entity.User) error {
 
 	hash, err := bcrypt.GenerateFromPassword(u.Password, bcrypt.DefaultCost)
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return errors.New("bcrypt error, check logs")
 	}
 
 	u.Password = hash
 
-	service.Logger.Info("All good, inserting user.")
+	service.Logger.Info("All good, inserting user.", zapReqID(ctx))
 	err = service.Repo.CreateUser(u)
-	service.Logger.Info("Got back from the database after insert query.")
+	service.Logger.Info("Got back from the database after insert query.", zapReqID(ctx))
 	if err != nil {
 		return err
 	}
@@ -63,15 +64,15 @@ func (service *Service) Signup(u *entity.User) error {
 }
 
 // Login creates a new JWT and returns it if there is no error.
-func (service *Service) Login(u *entity.User) (string, error) {
+func (service *Service) Login(ctx context.Context, u *entity.User) (string, error) {
 
 	if u == nil {
 		return "", ErrNilUser
 	}
 
-	service.Logger.Info("Checking for email in the database.")
+	service.Logger.Info("Checking for email in the database.", zapReqID(ctx))
 	user, err := service.Repo.GetUser(u.Email)
-	service.Logger.Info("Got back from the database after check.")
+	service.Logger.Info("Got back from the database after check.", zapReqID(ctx))
 	if err != nil {
 		return "", err
 	}
@@ -99,13 +100,13 @@ func (service *Service) createToken(id string) (string, error) {
 }
 
 // VerifyAndDecodeToken will get the payload we need if the token is valid.
-func (service *Service) VerifyAndDecodeToken(token string) (string, error) {
+func (service *Service) VerifyAndDecodeToken(ctx context.Context, token string) (string, error) {
 
-	service.Logger.Info("Searching for token in cache.")
-	if service.isBlacklistedToken(token) {
+	service.Logger.Info("Searching for token in cache.", zapReqID(ctx))
+	if service.isBlacklistedToken(ctx, token) {
 		return "", ErrInvalidToken
 	}
-	service.Logger.Info("Passed searching. Parsing token.")
+	service.Logger.Info("Passed searching. Parsing token.", zapReqID(ctx))
 
 	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 
@@ -119,7 +120,7 @@ func (service *Service) VerifyAndDecodeToken(token string) (string, error) {
 		return claims["id"].(string), nil
 	}
 
-	service.Logger.Error(err.Error())
+	service.Logger.Error(err.Error(), zapReqID(ctx))
 	return "", ErrInvalidToken
 }
 
@@ -156,14 +157,14 @@ func isValidPassword(password string) bool {
 }
 
 // Logout will put the JWT in the cache which acts as a blacklist.
-func (service *Service) Logout(token string) error {
+func (service *Service) Logout(ctx context.Context, token string) error {
 
-	service.Logger.Info("Attempt to blacklist token.")
+	service.Logger.Info("Attempt to blacklist token.", zapReqID(ctx))
 	err := service.blacklistToken(token)
 	if err != nil {
 		return err
 	}
-	service.Logger.Info("Blacklisted token.")
+	service.Logger.Info("Blacklisted token.", zapReqID(ctx))
 	return nil
 }
 
@@ -172,10 +173,10 @@ func (service *Service) blacklistToken(token string) error {
 	return err
 }
 
-func (service *Service) isBlacklistedToken(token string) bool {
+func (service *Service) isBlacklistedToken(ctx context.Context, token string) bool {
 	res, err := cache.Get(service.Conn, token)
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return false
 	}
 	return string(res) == "true"

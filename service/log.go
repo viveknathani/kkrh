@@ -1,67 +1,69 @@
 package service
 
 import (
+	"context"
+
 	"github.com/viveknathani/kkrh/entity"
 )
 
 // CreateLog will insert a new log in the database
-func (service *Service) CreateLog(l *entity.Log) error {
+func (service *Service) CreateLog(ctx context.Context, l *entity.Log) error {
 
 	if !isValidLog(l, false) {
 		return ErrInvalidLog
 	}
 
-	service.Logger.Info("Inserting log into database.")
+	service.Logger.Info("Inserting log into database.", zapReqID(ctx))
 	err := service.Repo.CreateLog(l)
 	if err != nil {
 		service.Logger.Error(err.Error())
 		return ErrNoLogInsert
 	}
-	service.Logger.Info("Log inserted.")
+	service.Logger.Info("Log inserted.", zapReqID(ctx))
 	return nil
 }
 
 // StartLog will create a new log in the database with endTime as 0
-func (service *Service) StartLog(l *entity.Log) error {
+func (service *Service) StartLog(ctx context.Context, l *entity.Log) error {
 
 	l.EndTime = 0
 
 	if !isValidLog(l, true) {
 		return ErrInvalidLog
 	}
-	service.Logger.Info("Inserting log into database.")
+	service.Logger.Info("Inserting log into database.", zapReqID(ctx))
 	err := service.Repo.CreateLog(l)
 	if err != nil {
 		service.Logger.Error(err.Error())
 		return ErrNoLogInsert
 	}
-	service.Logger.Info("Log inserted.")
+	service.Logger.Info("Log inserted.", zapReqID(ctx))
 	return nil
 }
 
 // EndLog will update a log's endTime
-func (service *Service) EndLog(id string, endTime int64) error {
+func (service *Service) EndLog(ctx context.Context, id string, endTime int64) error {
 
-	service.Logger.Info("Updating log in database.")
+	service.Logger.Info("Updating log in database.", zapReqID(ctx))
 	err := service.Repo.UpdateLog(id, endTime)
 	if err != nil {
 		service.Logger.Error(err.Error())
 		return ErrNoLogUpdate
 	}
-	service.Logger.Info("Log updated.")
+	service.Logger.Info("Log updated.", zapReqID(ctx))
 	return nil
 }
 
 // GetPendingLogs will fetch pending logs from DB for the given user.
-func (service *Service) GetPendingLogs(userId string) (*[]entity.Log, error) {
+func (service *Service) GetPendingLogs(ctx context.Context, userId string) (*[]entity.Log, error) {
 
-	service.Logger.Info("Fetching logs from database.")
+	service.Logger.Info("Fetching logs from database.", zapReqID(ctx))
 	list, err := service.Repo.GetLogs(userId, 0) // 0 signifies pending
 	if err != nil {
 		service.Logger.Error(err.Error())
 		return nil, ErrNoLogFetch
 	}
-	service.Logger.Info("Logs fetched.")
+	service.Logger.Info("Logs fetched.", zapReqID(ctx))
 	return list, nil
 }
 

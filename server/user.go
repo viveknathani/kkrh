@@ -24,7 +24,7 @@ func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.Service.Signup(&entity.User{
+	err = s.Service.Signup(r.Context(), &entity.User{
 		Name:     u.Name,
 		Email:    u.Email,
 		Password: []byte(u.Password),
@@ -70,7 +70,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := s.Service.Login(&entity.User{
+	token, err := s.Service.Login(r.Context(), &entity.User{
 		Email:    u.Email,
 		Password: []byte(u.Password),
 	})
@@ -118,7 +118,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.Service.Logout(cookie.Value)
+	err = s.Service.Logout(r.Context(), cookie.Value)
 	if err != nil {
 
 		s.Service.Logger.Error(err.Error())
@@ -146,7 +146,7 @@ func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.Hand
 			return
 		}
 
-		id, err := s.Service.VerifyAndDecodeToken(cookie.Value)
+		id, err := s.Service.VerifyAndDecodeToken(r.Context(), cookie.Value)
 		if err != nil {
 
 			s.Service.Logger.Error(err.Error())

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"log"
 	"os"
 	"testing"
@@ -67,18 +68,18 @@ func TestUserAuth(t *testing.T) {
 
 	p := u.Password
 
-	err := service.Signup(&u)
+	err := service.Signup(context.Background(), &u)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	u.Password = p
-	token, err := service.Login(&u)
+	token, err := service.Login(context.Background(), &u)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	payload, err := service.VerifyAndDecodeToken(token)
+	payload, err := service.VerifyAndDecodeToken(context.Background(), token)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,7 +88,7 @@ func TestUserAuth(t *testing.T) {
 		log.Fatal("id mismatch")
 	}
 
-	err = service.Logout(token)
+	err = service.Logout(context.Background(), token)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,7 +107,7 @@ func TestCreateLog(t *testing.T) {
 		Password: []byte("Hello2402@#"),
 	}
 
-	err := service.Signup(&u)
+	err := service.Signup(context.Background(), &u)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -121,7 +122,7 @@ func TestCreateLog(t *testing.T) {
 		Notes:     "",
 	}
 
-	err = service.CreateLog(l)
+	err = service.CreateLog(context.Background(), l)
 	if err != nil {
 		log.Fatal(err)
 	}
