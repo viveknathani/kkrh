@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/viveknathani/kkrh/cache"
 	"github.com/viveknathani/kkrh/database"
 	"github.com/viveknathani/kkrh/server"
@@ -19,6 +20,7 @@ var (
 	databaseServer string = ""
 	redisServer    string = ""
 	jwtSecret      string = ""
+	allowedOrigin  string = "*"
 )
 
 func init() {
@@ -35,6 +37,7 @@ func init() {
 		databaseServer = os.Getenv("DATABASE_URL")
 		redisServer = os.Getenv("REDIS_URL")
 		jwtSecret = os.Getenv("JWT_SECRET")
+		allowedOrigin = os.Getenv("ALLOWED_ORIGIN")
 	} else {
 		port = "8080"
 		databaseServer = "postgres://viveknathani:root@localhost:5432/kkrhdb"
@@ -88,10 +91,17 @@ func main() {
 		},
 		Router: mux.NewRouter(),
 	}
+
 	srv.SetupRoutes()
 
+	crossOrigin := cors.New(cors.Options{
+		AllowedOrigins:   []string{allowedOrigin},
+		AllowCredentials: true,
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut},
+	})
+
 	// Listen
-	err = http.ListenAndServe(":"+port, srv)
+	err = http.ListenAndServe(":"+port, crossOrigin.Handler(srv))
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)
