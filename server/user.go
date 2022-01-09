@@ -1,16 +1,17 @@
 package server
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
 	"github.com/viveknathani/kkrh/entity"
 	"github.com/viveknathani/kkrh/service"
+	"github.com/viveknathani/kkrh/shared"
 )
 
 func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 
+	showRequestMetaData(s.Service.Logger, r)
 	decoder := json.NewDecoder(r.Body)
 	var u userSignupRequest
 	err := decoder.Decode(&u)
@@ -56,6 +57,7 @@ func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
+	showRequestMetaData(s.Service.Logger, r)
 	decoder := json.NewDecoder(r.Body)
 	var u userLoginRequest
 	err := decoder.Decode(&u)
@@ -106,6 +108,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 
+	showRequestMetaData(s.Service.Logger, r)
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		s.Service.Logger.Error(err.Error())
@@ -133,6 +136,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		showRequestMetaData(s.Service.Logger, r)
 		cookie, err := r.Cookie("token")
 		if err != nil {
 			s.Service.Logger.Error(err.Error())
@@ -152,7 +156,7 @@ func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.Hand
 			return
 		}
 
-		request := r.Clone(context.WithValue(r.Context(), UserID("userId"), id))
+		request := r.Clone(shared.WithUserID(r.Context(), id))
 		handler.ServeHTTP(w, request)
 	}
 }
