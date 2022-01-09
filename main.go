@@ -30,11 +30,16 @@ func init() {
 		databaseServer = os.Getenv("DEV_DATABASE_URL")
 		redisServer = os.Getenv("DEV_REDIS_URL")
 		jwtSecret = os.Getenv("DEV_JWT_SECRET")
-	} else {
+	} else if mode == "prod" {
 		port = os.Getenv("PORT")
 		databaseServer = os.Getenv("DATABASE_URL")
 		redisServer = os.Getenv("REDIS_URL")
 		jwtSecret = os.Getenv("JWT_SECRET")
+	} else {
+		port = "8080"
+		databaseServer = "postgres://viveknathani:root@localhost:5432/kkrhdb"
+		redisServer = "127.0.0.1:6379"
+		jwtSecret = "hey"
 	}
 }
 
