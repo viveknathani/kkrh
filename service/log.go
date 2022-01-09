@@ -52,6 +52,19 @@ func (service *Service) EndLog(id string, endTime int64) error {
 	return nil
 }
 
+// GetPendingLogs will fetch pending logs from DB for the given user.
+func (service *Service) GetPendingLogs(userId string) (*[]entity.Log, error) {
+
+	service.Logger.Info("Fetching logs from database.")
+	list, err := service.Repo.GetLogs(userId, 0) // 0 signifies pending
+	if err != nil {
+		service.Logger.Error(err.Error())
+		return nil, ErrNoLogFetch
+	}
+	service.Logger.Info("Logs fetched.")
+	return list, nil
+}
+
 func isValidLog(l *entity.Log, ignoreEndTime bool) bool {
 
 	if l == nil {

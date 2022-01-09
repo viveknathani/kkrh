@@ -16,4 +16,5 @@ var (
 	ErrInvalidLog           = errors.New("Invalid log.")
 	ErrNoLogInsert          = errors.New("Insertion failed, check logs.")
 	ErrNoLogUpdate          = errors.New("Update failed, check logs.")
+	ErrNoLogFetch           = errors.New("Fetching failed, check logs.")
 )
