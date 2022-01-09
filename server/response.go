@@ -33,3 +33,7 @@ func sendServerError(w http.ResponseWriter) error {
 func sendCreated(w http.ResponseWriter) error {
 	return sendResponse(w, "created", 201)
 }
+
+func sendUpdated(w http.ResponseWriter) error {
+	return sendResponse(w, "updated", 204)
+}
