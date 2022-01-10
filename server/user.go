@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/viveknathani/kkrh/entity"
@@ -102,7 +101,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		HttpOnly: false, // for testing
 		MaxAge:   int(time.Hour * 24 * 3),
-		Domain:   os.Getenv("COOKIE_DOMAIN"),
+		Expires:  time.Now().UTC().Add(time.Hour * 24 * 3),
 		Path:     "/",
 		Secure:   true,
 		SameSite: http.SameSiteNoneMode,
