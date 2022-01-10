@@ -100,11 +100,12 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    token,
-		HttpOnly: false,
+		HttpOnly: false, // for testing
 		MaxAge:   int(time.Hour * 24 * 3),
 		Domain:   os.Getenv("COOKIE_DOMAIN"),
 		Path:     "/",
 		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 	})
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
