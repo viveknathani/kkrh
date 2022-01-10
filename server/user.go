@@ -102,6 +102,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		MaxAge:   int(time.Hour * 24 * 3),
 		SameSite: http.SameSiteNoneMode,
+		Path:     "/",
 	})
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
