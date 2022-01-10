@@ -100,9 +100,8 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    token,
-		HttpOnly: true,
+		HttpOnly: false,
 		MaxAge:   int(time.Hour * 24 * 3),
-		SameSite: http.SameSiteNoneMode,
 		Domain:   os.Getenv("COOKIE_DOMAIN"),
 		Path:     "/",
 	})
