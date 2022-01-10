@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/viveknathani/kkrh/entity"
 	"github.com/viveknathani/kkrh/service"
@@ -99,6 +100,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		Name:     "token",
 		Value:    token,
 		HttpOnly: true,
+		MaxAge:   int(time.Hour * 24 * 3),
 	})
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
@@ -139,9 +141,9 @@ func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.Hand
 		showRequestMetaData(s.Service.Logger, r)
 		cookie, err := r.Cookie("token")
 		if err != nil {
-			s.Service.Logger.Error(err.Error())
-			if ok := sendServerError(w); ok != nil {
-				s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(err.Error(), zapReqID(r))
+			if ok := sendClientError(w, "not authenticated"); ok != nil {
+				s.Service.Logger.Error(ok.Error(), zapReqID(r))
 			}
 			return
 		}
@@ -149,9 +151,9 @@ func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.Hand
 		id, err := s.Service.VerifyAndDecodeToken(r.Context(), cookie.Value)
 		if err != nil {
 
-			s.Service.Logger.Error(err.Error())
+			s.Service.Logger.Error(err.Error(), zapReqID(r))
 			if ok := sendClientError(w, "not authenticated"); ok != nil {
-				s.Service.Logger.Error(ok.Error())
+				s.Service.Logger.Error(ok.Error(), zapReqID(r))
 			}
 			return
 		}
