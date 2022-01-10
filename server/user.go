@@ -104,6 +104,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   int(time.Hour * 24 * 3),
 		Domain:   os.Getenv("COOKIE_DOMAIN"),
 		Path:     "/",
+		Secure:   true,
 	})
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
