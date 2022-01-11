@@ -100,7 +100,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		Name:     "token",
 		Value:    token,
 		HttpOnly: false, // for testing
-		MaxAge:   int(time.Hour * 24 * 3),
+		MaxAge:   int(time.Hour.Seconds() * 24 * 3),
 		Expires:  time.Now().UTC().Add(time.Hour * 24 * 3),
 		Path:     "/",
 		Secure:   true,
