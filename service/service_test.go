@@ -27,7 +27,7 @@ func TestMain(t *testing.M) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	c.Initialize(redisurl)
+	c.Initialize(redisurl, "", "")
 	service.Repo = db
 	service.Conn = c.Pool.Get()
 	service.JwtSecret = []byte("secret")

@@ -18,6 +18,8 @@ var (
 	port           string = ""
 	databaseServer string = ""
 	redisServer    string = ""
+	redisUsername  string = ""
+	redisPassword  string = ""
 	jwtSecret      string = ""
 	allowedOrigin  string = "*"
 )
@@ -35,6 +37,8 @@ func init() {
 		port = os.Getenv("PORT")
 		databaseServer = os.Getenv("DATABASE_URL")
 		redisServer = os.Getenv("REDIS_URL")
+		redisUsername = os.Getenv("REDIS_USERNAME")
+		redisPassword = os.Getenv("REDIS_PASSWORD")
 		jwtSecret = os.Getenv("JWT_SECRET")
 		allowedOrigin = os.Getenv("ALLOWED_ORIGIN")
 	} else {
@@ -77,7 +81,7 @@ func main() {
 
 	// Setup cache
 	memory := &cache.Cache{}
-	memory.Initialize(redisServer)
+	memory.Initialize(redisServer, redisUsername, redisPassword)
 	memoryConn := memory.Pool.Get()
 
 	// Setup the web server

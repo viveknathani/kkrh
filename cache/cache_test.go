@@ -15,7 +15,7 @@ func TestGetAndSet(t *testing.T) {
 
 	url := "127.0.0.1:6379"
 	c := &Cache{}
-	c.Initialize(url)
+	c.Initialize(url, "", "")
 	conn := c.Pool.Get()
 
 	_, err := Set(conn, "random", []byte("45"))

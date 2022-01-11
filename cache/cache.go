@@ -14,11 +14,21 @@ type Cache struct {
 
 // Initialize will set up the connection pool so that
 // future connections can take place on the given URL.
-func (cache *Cache) Initialize(url string) {
+func (cache *Cache) Initialize(url string, username string, password string) {
 
 	pool := &redis.Pool{
 		Dial: func() (redis.Conn, error) {
-			conn, err := redis.Dial("tcp", url)
+
+			var conn redis.Conn
+			var err error
+			if username == "" || password == "" {
+				conn, err = redis.Dial("tcp", url)
+			} else {
+				user := redis.DialUsername(username)
+				pass := redis.DialPassword(password)
+				conn, err = redis.Dial("tcp", url, user, pass)
+			}
+
 			if err == nil {
 				return conn, nil
 			}
