@@ -4,7 +4,8 @@ function getById(id) {
 
 function fetchLogs() {
 
-    fetch(`/api/log/pending`, { method: "GET" })
+    const endoint = "/api/log/pending"
+    fetch(endoint, { method: "GET" })
     .then((response) => response.json())
     .then((data) => {
         if (data.message == "not authenticated") {
@@ -34,7 +35,7 @@ function startLog(event) {
             notes = getById("start-notes").value;
 
             const endpoint = "/api/log/start/"
-            fetch(host + endpoint, {
+            fetch(endpoint, {
                 method: "POST",
                 body: JSON.stringify({
                     startTime,
@@ -70,12 +71,13 @@ function logout(event) {
 function redirectIfNeeded() {
     
     item = localStorage.getItem("isAuthenticated")
-    if (item == "true") {
-        window.location.replace("./home.html")
+    if (item === "false") {
+        window.location.replace("/");
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     fetchLogs();
     document.querySelector('#start-submit').addEventListener('click', startLog);
+    document.querySelector('#logout').addEventListener('click', logout);
 });
