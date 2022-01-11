@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -37,8 +36,6 @@ func zapReqID(r *http.Request) zapcore.Field {
 }
 
 func showRequestMetaData(l *zap.Logger, r *http.Request) {
-
-	fmt.Println(r.Context())
 
 	reqMethod := zapcore.Field{
 		Key:    "method",
