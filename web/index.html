@@ -8,8 +8,8 @@
     <script defer src="/web/scripts/index.js"></script>
 </head>
 <body style="display: none;">
+    <div id="container">
     <form id="auth-login">
-        <p>login</p>
         <div class="form-row">
             <input id="login-email" type="email" placeholder="email">
         </div>
@@ -19,19 +19,20 @@
         <button id="login-submit" type="submit">login</button>
         <p id="login-message"></p>
     </form>
+    <p>or</p>
     <form id="auth-signup">
-        <p>signup</p>
         <div class="form-row">
-            <input id="signup-name" type="text" placeholder="name">
+            <input id="signup-name" type="text" placeholder="name" autocomplete="off">
         </div>
         <div class="form-row">
-            <input id="signup-email" type="email" placeholder="email">
+            <input id="signup-email" type="email" placeholder="email" autocomplete="off">
         </div>
         <div class="form-row">
-            <input id="signup-password" type="password" placeholder="password">
+            <input id="signup-password" type="password" placeholder="password" autocomplete="off">
         </div>
         <button id="signup-submit" type="submit">signup</button>
         <p id="signup-message"></p>
     </form>
+    </div>  
 </body>
 </html>
