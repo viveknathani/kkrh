@@ -4,21 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>home</title>
-    <link rel="stylesheet" href="./css/home.css">
-    <script defer src="scripts/home.js"></script>
+    <link rel="stylesheet" href="/web/css/home.css">
+    <script defer src="/web/scripts/home.js"></script>
 </head>
 <body>
-
-    <form>
-        <p>start log</p>
-        <div class=".form-row">
-            <input id="start-activity" type="text" placeholder="activity">
-        </div>    
-        <div class=".form-row">
-            <input id="start-notes" type="text" placeholder="notes">
-        </div>
-        <button id="start-submit" type="submit">submit</button>
-    </form>
-
+    <h2 style="display: none;" id="message">you are not authenticated, son. <a href="./">(come here)</a></h2>
+    <div style="display: none;" id="content">
+        <form>
+            <p>start log</p>
+            <div class=".form-row">
+                <input id="start-activity" type="text" placeholder="activity">
+            </div>    
+            <div class=".form-row">
+                <input id="start-notes" type="text" placeholder="notes">
+            </div>
+            <button id="start-submit" type="submit">submit</button>
+        </form>
+    </div>
+    <button id="logout">logout</button>
 </body>
 </html>

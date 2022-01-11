@@ -1,5 +1,3 @@
-const host = "https://kkrh.herokuapp.com"
-
 function getById(id) { 
     return document.getElementById(id); 
 }
@@ -9,17 +7,19 @@ function redirectIfNeeded() {
     item = localStorage.getItem("isAuthenticated")
     if (item == "true") {
         window.location.replace("./home.html")
+    } else {
+        document.getElementsByTagName("body")[0].style.display = 'block';
     }
 }
 
 function login(event) {
 
     event.preventDefault();
-    let email = getById("signup-email").value;
-    let password = getById("signup-password").value;
+    let email = getById("login-email").value;
+    let password = getById("login-password").value;
 
     const endpoint = "/api/user/login/"
-    fetch(host + endpoint, {
+    fetch(endpoint, {
         method: "POST",
         body: JSON.stringify({
             email,
@@ -32,7 +32,6 @@ function login(event) {
             redirectIfNeeded()
         }
     }).catch((err) => console.log(err));
-    fetch(host + "/api/log/pending", {method: "GET"})
 }
 
 function signup(event) {
@@ -42,7 +41,7 @@ function signup(event) {
     let password = getById("signup-password").value;
 
     const endpoint = "/api/user/signup/"
-    fetch(host + endpoint, {
+    fetch(endpoint, {
         method: "POST",
         body: JSON.stringify({
             name,
@@ -55,8 +54,16 @@ function signup(event) {
     }).catch((err) => console.log(err));
 }
 
+function redirectIfNeeded() {
+    
+    item = localStorage.getItem("isAuthenticated")
+    if (item == "true") {
+        window.location.replace("./home.html")
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    redirectIfNeeded()
+    redirectIfNeeded();
     document.querySelector('#signup-submit').addEventListener('click', signup);
     document.querySelector('#login-submit').addEventListener('click', login);
 });

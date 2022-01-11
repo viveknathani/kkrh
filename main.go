@@ -5,9 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"github.com/viveknathani/kkrh/cache"
 	"github.com/viveknathani/kkrh/database"
 	"github.com/viveknathani/kkrh/server"
@@ -95,14 +93,11 @@ func main() {
 
 	srv.SetupRoutes()
 
-	crossOrigin := cors.New(cors.Options{
-		AllowedOrigins:   []string{allowedOrigin},
-		AllowCredentials: true,
-		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut},
-	})
+	dir := "web/"
+	srv.Router.PathPrefix("/web/").Handler(http.StripPrefix("/web/", http.FileServer(http.Dir(dir))))
 
 	// Listen
-	err = http.ListenAndServe(":"+port, handlers.ProxyHeaders(crossOrigin.Handler(srv)))
+	err = http.ListenAndServe(":"+port, srv)
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)
