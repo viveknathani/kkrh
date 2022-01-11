@@ -102,7 +102,7 @@ func main() {
 	})
 
 	// Listen
-	err = http.ListenAndServe(":"+port, crossOrigin.Handler(handlers.ProxyHeaders(srv)))
+	err = http.ListenAndServe(":"+port, handlers.ProxyHeaders(crossOrigin.Handler(srv)))
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)
