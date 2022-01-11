@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/viveknathani/kkrh/cache"
@@ -101,7 +102,7 @@ func main() {
 	})
 
 	// Listen
-	err = http.ListenAndServe(":"+port, crossOrigin.Handler(srv))
+	err = http.ListenAndServe(":"+port, crossOrigin.Handler(handlers.ProxyHeaders(srv)))
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)

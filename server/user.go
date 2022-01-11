@@ -143,8 +143,6 @@ func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.Hand
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		showRequestMetaData(s.Service.Logger, r)
-		s.Service.Logger.Info(r.RemoteAddr)
-		s.Service.Logger.Info(r.URL.Scheme)
 		cookie, err := r.Cookie("token")
 		if err != nil {
 			s.Service.Logger.Error(err.Error(), zapReqID(r))
