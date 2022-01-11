@@ -82,7 +82,6 @@ func isValidLog(l *entity.Log, ignoreEndTime bool) bool {
 	check = check && (l.Latitude != 0)
 	check = check && (l.Longitude != 0)
 	check = check && (l.StartTime != 0)
-	check = check && (l.EndTime != 0)
 	check = check && (l.Activity != "")
 	return check
 }
