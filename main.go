@@ -21,7 +21,6 @@ var (
 	redisUsername  string = ""
 	redisPassword  string = ""
 	jwtSecret      string = ""
-	allowedOrigin  string = "*"
 )
 
 func init() {
@@ -40,7 +39,6 @@ func init() {
 		redisUsername = os.Getenv("REDIS_USERNAME")
 		redisPassword = os.Getenv("REDIS_PASSWORD")
 		jwtSecret = os.Getenv("JWT_SECRET")
-		allowedOrigin = os.Getenv("ALLOWED_ORIGIN")
 	} else {
 		port = "8080"
 		databaseServer = "postgres://viveknathani:root@localhost:5432/kkrhdb"
@@ -96,9 +94,6 @@ func main() {
 	}
 
 	srv.SetupRoutes()
-
-	dir := "web/"
-	srv.Router.PathPrefix("/web/").Handler(http.StripPrefix("/web/", http.FileServer(http.Dir(dir))))
 
 	// Listen
 	err = http.ListenAndServe(":"+port, srv)
