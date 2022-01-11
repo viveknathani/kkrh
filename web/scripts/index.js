@@ -4,9 +4,9 @@ function getById(id) {
 
 function redirectIfNeeded() {
     
-    item = localStorage.getItem("isAuthenticated")
-    if (item == "true") {
-        window.location.replace("./home.html")
+    item = localStorage.getItem("isAuthenticated");
+    if (item === "true") {
+        window.location.replace("/web/home.html");
     } else {
         document.getElementsByTagName("body")[0].style.display = 'block';
     }
@@ -27,9 +27,14 @@ function login(event) {
         })
     }).then((response) => response.json())
     .then((data) => {
-        if (data.message == "ok") {
+        if (data.message === "ok") {
             localStorage.setItem("isAuthenticated", "true")
-            redirectIfNeeded()
+            redirectIfNeeded();
+        } else {
+            msg = getById("login-message");
+            msg.innerText = "oops! " + data.message;
+            msg.style.color = 'red';
+            
         }
     }).catch((err) => console.log(err));
 }
@@ -50,16 +55,17 @@ function signup(event) {
         })
     }).then((response) => response.json())
     .then((data) => {
-        console.log(data);
+        if (data.message === "created") {
+            msg = getById("signup-message");
+            msg.innerText = data.message;
+            msg.style.color = 'green';
+        } else {
+            msg = getById("signup-message");
+            msg.innerText = "oops! " + data.message;
+            msg.style.color = 'red';
+            
+        }
     }).catch((err) => console.log(err));
-}
-
-function redirectIfNeeded() {
-    
-    item = localStorage.getItem("isAuthenticated")
-    if (item == "true") {
-        window.location.replace("./home.html")
-    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
