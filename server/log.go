@@ -53,7 +53,7 @@ func (s *Server) handleLogStart(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ok := sendCreated(w); ok != nil {
-		s.Service.Logger.Error(err.Error(), zapReqID(r))
+		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
 }
 
@@ -81,7 +81,7 @@ func (s *Server) handleLogEnd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ok := sendUpdated(w); ok != nil {
-		s.Service.Logger.Error(err.Error(), zapReqID(r))
+		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
 }
 
@@ -103,6 +103,6 @@ func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	if _, ok := w.Write(data); ok != nil {
-		s.Service.Logger.Error(err.Error(), zapReqID(r))
+		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
 }
