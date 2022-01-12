@@ -35,5 +35,5 @@ func sendCreated(w http.ResponseWriter) error {
 }
 
 func sendUpdated(w http.ResponseWriter) error {
-	return sendResponse(w, "updated", http.StatusNoContent)
+	return sendResponse(w, "updated", http.StatusOK)
 }
