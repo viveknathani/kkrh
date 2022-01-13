@@ -10,6 +10,7 @@ func (s *Server) SetupRoutes() {
 	s.Router.HandleFunc("/api/log/start/", s.middlewareTokenVerification(s.handleLogStart)).Methods(http.MethodPost)
 	s.Router.HandleFunc("/api/log/stop/", s.middlewareTokenVerification(s.handleLogEnd)).Methods(http.MethodPut)
 	s.Router.HandleFunc("/api/log/pending", s.middlewareTokenVerification(s.handleLogsPending)).Methods(http.MethodGet)
+	s.Router.HandleFunc("/health", s.showThatIAmAlive)
 	s.setupWeb("web")
 	s.Router.HandleFunc("/", s.serveIndex)
 }
