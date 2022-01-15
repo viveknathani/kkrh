@@ -12,15 +12,14 @@ import (
 
 func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 
-	showRequestMetaData(s.Service.Logger, r)
 	decoder := json.NewDecoder(r.Body)
 	var u userSignupRequest
 	err := decoder.Decode(&u)
 
 	if err != nil {
-		s.Service.Logger.Error(err.Error())
+		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		if ok := sendClientError(w, err.Error()); ok != nil {
-			s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
 		}
 		return
 	}
@@ -32,19 +31,19 @@ func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 
-		s.Service.Logger.Error(err.Error())
+		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		switch {
 		case err == service.ErrEmailExists || err == service.ErrInvalidEmailFormat || err == service.ErrInvalidPasswordFormat:
 			{
 				if ok := sendClientError(w, err.Error()); ok != nil {
-					s.Service.Logger.Error(ok.Error())
+					s.Service.Logger.Error(ok.Error(), zapReqID(r))
 				}
 				return
 			}
 		default:
 			{
 				if ok := sendServerError(w); ok != nil {
-					s.Service.Logger.Error(ok.Error())
+					s.Service.Logger.Error(ok.Error(), zapReqID(r))
 				}
 				return
 			}
@@ -52,21 +51,20 @@ func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ok := sendCreated(w); ok != nil {
-		s.Service.Logger.Error(ok.Error())
+		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
 }
 
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
-	showRequestMetaData(s.Service.Logger, r)
 	decoder := json.NewDecoder(r.Body)
 	var u userLoginRequest
 	err := decoder.Decode(&u)
 
 	if err != nil {
-		s.Service.Logger.Error(err.Error())
+		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		if ok := sendClientError(w, err.Error()); ok != nil {
-			s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
 		}
 		return
 	}
@@ -77,19 +75,19 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 
-		s.Service.Logger.Error(err.Error())
+		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		switch {
 		case err == service.ErrInvalidEmailPassword:
 			{
 				if ok := sendClientError(w, err.Error()); ok != nil {
-					s.Service.Logger.Error(ok.Error())
+					s.Service.Logger.Error(ok.Error(), zapReqID(r))
 				}
 				return
 			}
 		default:
 			{
 				if ok := sendServerError(w); ok != nil {
-					s.Service.Logger.Error(ok.Error())
+					s.Service.Logger.Error(ok.Error(), zapReqID(r))
 				}
 				return
 			}
@@ -107,18 +105,17 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
-		s.Service.Logger.Error(ok.Error())
+		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
 }
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 
-	showRequestMetaData(s.Service.Logger, r)
 	cookie, err := r.Cookie("token")
 	if err != nil {
-		s.Service.Logger.Error(err.Error())
+		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		if ok := sendServerError(w); ok != nil {
-			s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
 		}
 		return
 	}
@@ -128,20 +125,19 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 
 		s.Service.Logger.Error(err.Error())
 		if ok := sendServerError(w); ok != nil {
-			s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
 		}
 		return
 	}
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
-		s.Service.Logger.Error(ok.Error())
+		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
 }
 
 func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		showRequestMetaData(s.Service.Logger, r)
 		cookie, err := r.Cookie("token")
 		if err != nil {
 			s.Service.Logger.Error(err.Error(), zapReqID(r))

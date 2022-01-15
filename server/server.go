@@ -23,6 +23,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	requestID := uuid.New().String()
 	request := r.Clone(shared.WithRequestID(context.Background(), requestID))
+	showRequestMetaData(s.Service.Logger, request)
 	s.Router.ServeHTTP(w, request)
 }
 

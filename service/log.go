@@ -13,13 +13,13 @@ func (service *Service) CreateLog(ctx context.Context, l *entity.Log) error {
 		return ErrInvalidLog
 	}
 
-	service.Logger.Info("Inserting log into database.", zapReqID(ctx))
+	service.Logger.Info("database: insert log start.", zapReqID(ctx))
 	err := service.Repo.CreateLog(l)
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return ErrNoLogInsert
 	}
-	service.Logger.Info("Log inserted.", zapReqID(ctx))
+	service.Logger.Info("database: insert log complete.", zapReqID(ctx))
 	return nil
 }
 
@@ -31,39 +31,39 @@ func (service *Service) StartLog(ctx context.Context, l *entity.Log) error {
 	if !isValidLog(l, true) {
 		return ErrInvalidLog
 	}
-	service.Logger.Info("Inserting log into database.", zapReqID(ctx))
+	service.Logger.Info("database: insert log start.", zapReqID(ctx))
 	err := service.Repo.CreateLog(l)
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return ErrNoLogInsert
 	}
-	service.Logger.Info("Log inserted.", zapReqID(ctx))
+	service.Logger.Info("database: insert log complete.", zapReqID(ctx))
 	return nil
 }
 
 // EndLog will update a log's endTime
 func (service *Service) EndLog(ctx context.Context, id string, endTime int64) error {
 
-	service.Logger.Info("Updating log in database.", zapReqID(ctx))
+	service.Logger.Info("database: update log start.", zapReqID(ctx))
 	err := service.Repo.UpdateLog(id, endTime)
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return ErrNoLogUpdate
 	}
-	service.Logger.Info("Log updated.", zapReqID(ctx))
+	service.Logger.Info("database: update log complete.", zapReqID(ctx))
 	return nil
 }
 
 // GetPendingLogs will fetch pending logs from DB for the given user.
 func (service *Service) GetPendingLogs(ctx context.Context, userId string) (*[]entity.Log, error) {
 
-	service.Logger.Info("Fetching logs from database.", zapReqID(ctx))
+	service.Logger.Info("database: fetch logs start.", zapReqID(ctx))
 	list, err := service.Repo.GetLogs(userId, 0) // 0 signifies pending
 	if err != nil {
-		service.Logger.Error(err.Error())
+		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return nil, ErrNoLogFetch
 	}
-	service.Logger.Info("Logs fetched.", zapReqID(ctx))
+	service.Logger.Info("database: fetch logs complete.", zapReqID(ctx))
 	return list, nil
 }
 

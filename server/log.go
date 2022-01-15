@@ -11,14 +11,13 @@ import (
 
 func (s *Server) handleLogStart(w http.ResponseWriter, r *http.Request) {
 
-	showRequestMetaData(s.Service.Logger, r)
 	var l logStartRequest
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&l)
 	if err != nil {
 		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		if ok := sendClientError(w, err.Error()); ok != nil {
-			s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
 		}
 		return
 	}
@@ -38,14 +37,14 @@ func (s *Server) handleLogStart(w http.ResponseWriter, r *http.Request) {
 			{
 				s.Service.Logger.Error(err.Error(), zapReqID(r))
 				if ok := sendClientError(w, err.Error()); ok != nil {
-					s.Service.Logger.Error(ok.Error())
+					s.Service.Logger.Error(ok.Error(), zapReqID(r))
 				}
 				return
 			}
 		default:
 			{
 				if ok := sendServerError(w); ok != nil {
-					s.Service.Logger.Error(err.Error(), zapReqID(r))
+					s.Service.Logger.Error(ok.Error(), zapReqID(r))
 				}
 				return
 			}
@@ -59,14 +58,13 @@ func (s *Server) handleLogStart(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogEnd(w http.ResponseWriter, r *http.Request) {
 
-	showRequestMetaData(s.Service.Logger, r)
 	var l logEndRequest
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&l)
 	if err != nil {
 		s.Service.Logger.Error(err.Error(), zapReqID(r))
 		if ok := sendClientError(w, err.Error()); ok != nil {
-			s.Service.Logger.Error(ok.Error())
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
 		}
 		return
 	}
@@ -87,7 +85,6 @@ func (s *Server) handleLogEnd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
 
-	showRequestMetaData(s.Service.Logger, r)
 	list, err := s.Service.GetPendingLogs(r.Context(), shared.ExtractUserID(r.Context()))
 	if err != nil {
 		if ok := sendServerError(w); ok != nil {
