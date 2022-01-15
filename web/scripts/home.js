@@ -93,6 +93,7 @@ function logout(event) {
     .catch((err) => console.log(err))
 }
 
+//if the user is not logged in, we need to go to the auth page
 function redirectIfNeeded() {
     
     const item = localStorage.getItem("isAuthenticated");
@@ -101,18 +102,27 @@ function redirectIfNeeded() {
     }
 }
 
+// given startTime in UNIX format, get the time elapsed
+// in hours:minutes:seconds format
 function calculateTimeElapsed(startTime) {
     
+    // factor in 1000 to convert to milliseconds as it works for the Date object
     startTime = startTime * 1000;
     const elapsed = (new Date().getTime() - startTime) / 1000;
     let hours   = Math.floor((elapsed / 3600) % 24);
     let minutes = Math.floor((elapsed / 60) % 60);
     let seconds = Math.floor(elapsed % 60);
 
+    // append a '0' if value is less than 10
     (hours < 10) ? hours = '0' + hours.toString() : hours.toString();
     (minutes < 10) ? minutes = '0' + minutes.toString() : minutes.toString();
     (seconds < 10) ? seconds = '0' + seconds.toString() : seconds.toString();
     return `${hours}:${minutes}:${seconds}`;
+}
+
+function applyStyleToTableOrRow(element) {
+    element.style.border = '1px solid white';
+    element.style.borderCollapse = 'collapse';
 }
 
 function fillTable(data) {
@@ -120,19 +130,20 @@ function fillTable(data) {
     let table = getById("pending");
     table.querySelectorAll('*').forEach(kid => kid.remove());
 
-    table.style.border = '1px solid white';
-    table.style.borderCollapse = 'collapse';
+    applyStyleToTableOrRow(table)
     table.style.margin = 'auto';
 
     let store = new Map();
     for (let i = 0; i < data.length; ++i) {
 
+        // create all elements
         let row = document.createElement('tr');
         let activityColumn = document.createElement('td');
         let elapsedColumn = document.createElement('td');
         let stopColumn = document.createElement('td');
         let stopButton = document.createElement('button');
 
+        // bring in the text and append them
         activityColumn.innerText = data[i].activity;
         stopButton.innerText = 'stop';
         stopColumn.appendChild(stopButton);
@@ -141,13 +152,18 @@ function fillTable(data) {
         row.appendChild(stopColumn);
         table.appendChild(row);
 
+        // sprinkle some CSS
         row.childNodes.forEach((kid, idx, parent) => {
-            kid.style.border = '1px solid white';
-            kid.style.borderCollapse = 'collapse';
+            applyStyleToTableOrRow(kid)
             kid.style.padding = '10px';
         })
 
+        // store element in Map
         store.set(elapsedColumn, 'go');
+
+        // attach an interval that forms a closure with the
+        // elapsedColumn and the Map and use these to alter
+        // the text when Map shows that time is stopped
         let interval = setInterval((startTime) => {
             if (store.get(elapsedColumn) === 'stop') {
                 clearInterval(interval);
@@ -155,6 +171,8 @@ function fillTable(data) {
             elapsedColumn.innerText = calculateTimeElapsed(startTime);
         }, 1000, data[i].startTime);
 
+        // setup a function to stop the time by forming a 
+        // closure with the elapsedColumn
         stopButton.onclick = function(event) {
             event.preventDefault();
             store.set(elapsedColumn, 'stop');

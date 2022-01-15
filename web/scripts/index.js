@@ -2,6 +2,7 @@ function getById(id) {
     return document.getElementById(id); 
 }
 
+// if user is logged in, we move past the auth page
 function redirectIfNeeded() {
     
     item = localStorage.getItem("isAuthenticated");
