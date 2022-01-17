@@ -50,6 +50,7 @@ func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	showRequestEnd(s.Service.Logger, r)
 	if ok := sendCreated(w); ok != nil {
 		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
@@ -107,6 +108,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
 		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
+	showRequestEnd(s.Service.Logger, r)
 }
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
@@ -133,6 +135,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
 		s.Service.Logger.Error(ok.Error(), zapReqID(r))
 	}
+	showRequestEnd(s.Service.Logger, r)
 }
 
 func (s *Server) middlewareTokenVerification(handler http.HandlerFunc) http.HandlerFunc {
