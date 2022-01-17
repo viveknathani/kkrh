@@ -44,6 +44,7 @@ func (hsts *SecurityHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("X-Frame-Options", "DENY")
 	w.Header().Add("Content-Security-Policy", "default-src 'self'")
+	w.Header().Add("X-Content-Type-Options", "nosniff")
 	if isHTTPS(r) {
 		w.Header().Add("Strict-Transport-Security", createHSTSHeaderValue())
 		hsts.next.ServeHTTP(w, r)
