@@ -6,17 +6,17 @@ import (
 	"strconv"
 )
 
-type HandlerHSTS struct {
+type SecurityHandler struct {
 	next http.Handler
 }
 
-func NewHandlerHSTS(next http.Handler) *HandlerHSTS {
-	return &HandlerHSTS{
+func NewSecurityHandler(next http.Handler) *SecurityHandler {
+	return &SecurityHandler{
 		next: next,
 	}
 }
 
-func createHeaderValue() string {
+func createHSTSHeaderValue() string {
 	buf := bytes.NewBufferString("max-age=")
 	buf.WriteString(strconv.Itoa(63072000)) // 2y
 	buf.WriteString("; includeSubDomains")
@@ -40,10 +40,11 @@ func isHTTPS(r *http.Request) bool {
 	return false
 }
 
-func (hsts *HandlerHSTS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (hsts *SecurityHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Add("X-Frame-Options", "DENY")
 	if isHTTPS(r) {
-		w.Header().Add("Strict-Transport-Security", createHeaderValue())
+		w.Header().Add("Strict-Transport-Security", createHSTSHeaderValue())
 		hsts.next.ServeHTTP(w, r)
 	} else {
 		securedURL := "https://" + r.Host + r.RequestURI

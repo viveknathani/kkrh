@@ -96,7 +96,7 @@ func main() {
 	srv.SetupRoutes()
 
 	// HSTS
-	hsts := server.NewHandlerHSTS(srv)
+	hsts := server.NewSecurityHandler(srv)
 
 	// Listen
 	err = http.ListenAndServe(":"+port, hsts)
