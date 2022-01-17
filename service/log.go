@@ -42,10 +42,10 @@ func (service *Service) StartLog(ctx context.Context, l *entity.Log) error {
 }
 
 // EndLog will update a log's endTime
-func (service *Service) EndLog(ctx context.Context, id string, endTime int64) error {
+func (service *Service) EndLog(ctx context.Context, userId string, id string, endTime int64) error {
 
 	service.Logger.Info("database: update log start.", zapReqID(ctx))
-	err := service.Repo.UpdateLog(id, endTime)
+	err := service.Repo.UpdateLog(userId, id, endTime)
 	if err != nil {
 		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return ErrNoLogUpdate

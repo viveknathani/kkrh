@@ -14,7 +14,7 @@ const (
 	statementSelectUserFromEmail          = "select * from users where email = $1;"
 	statementInsertLog                    = "insert into logs (id, userId, latitude, longitude, activity, startTime, endTime, notes) values ($1, $2, $3, $4, $5, $6, $7, $8);"
 	statementSelectLogsFromUserAndEndTime = "select * from logs where userId = $1 and endTime = $2;"
-	statementUpdateLogsWithIdAndEndTime   = "update logs set endTime = $1 where id = $2;"
+	statementUpdateLogsWithIdAndEndTime   = "update logs set endTime = $1 where id = $2 and userId = $3;"
 	statementDeleteUser                   = "delete from users where id = $1;"
 	statementDeleteLog                    = "delete from logs where id = $1;"
 )
@@ -67,9 +67,9 @@ func (db *Database) CreateLog(l *entity.Log) error {
 
 // UpdateLog will update an existing log entry with the new value of
 // endTime.
-func (db *Database) UpdateLog(logId string, endTime int64) error {
+func (db *Database) UpdateLog(userID string, logId string, endTime int64) error {
 
-	err := db.execWithTransaction(statementUpdateLogsWithIdAndEndTime, endTime, logId)
+	err := db.execWithTransaction(statementUpdateLogsWithIdAndEndTime, endTime, logId, userID)
 	return err
 }
 

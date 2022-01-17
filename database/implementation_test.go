@@ -127,7 +127,7 @@ func TestCreateAndGetLogs(t *testing.T) {
 		}
 
 		item.EndTime = 9999
-		err = db.UpdateLog(item.Id, 9999)
+		err = db.UpdateLog(item.UserId, item.Id, 9999)
 		if err != nil {
 			log.Fatal(err)
 		}

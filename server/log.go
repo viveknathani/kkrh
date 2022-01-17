@@ -70,7 +70,7 @@ func (s *Server) handleLogEnd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.Service.EndLog(r.Context(), l.LogId, l.EndTime)
+	err = s.Service.EndLog(r.Context(), shared.ExtractUserID(r.Context()), l.LogId, l.EndTime)
 
 	if err != nil {
 		if ok := sendServerError(w); ok != nil {

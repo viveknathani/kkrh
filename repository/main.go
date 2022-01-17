@@ -25,7 +25,7 @@ type logRepository interface {
 
 	// UpdateLog will update an existing log entry with the new value of
 	// endTime.
-	UpdateLog(logId string, endTime int64) error
+	UpdateLog(userID string, logId string, endTime int64) error
 
 	// GetLogs will fetch all logs for the user where stopTime matches the
 	// given endTime.
