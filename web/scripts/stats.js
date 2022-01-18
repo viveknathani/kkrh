@@ -7,9 +7,11 @@ class PieChart {
     }
 
     drawPieSlice(ctx, startAngle, endAngle, color, text) {
+        
         let centerX = 150;
         let centerY = 150;
         let radius = 150;
+
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.moveTo(centerX,centerY);
@@ -49,6 +51,7 @@ function getById(id) {
     return document.getElementById(id); 
 }
 
+// initiate a pie chart with some colours
 function prepareAndSendForDrawing(store, totalSeconds) {
 
     let arr = [];
@@ -60,9 +63,9 @@ function prepareAndSendForDrawing(store, totalSeconds) {
     store.forEach((value, key) => {
         let temp = ((value * 100.0)) / Number(totalSeconds);
         sum += temp;
-        arr.push({ activity: key, timeSpent: 40 });
+        arr.push({ activity: key, timeSpent: temp });
     });
-    arr.push({activity: 'unrecorded', timeSpent: 20 });
+    arr.push({activity: 'unrecorded', timeSpent: 100 - sum });
 
     let board = getById("board");
     board.width = 300;
@@ -71,6 +74,7 @@ function prepareAndSendForDrawing(store, totalSeconds) {
     pie.draw();
 }
 
+// make the API call and send data for drawing
 function getLogsInRange(startTime, endTime) {
 
     fetch(`/api/stats/range?startTime=${startTime}&endTime=${endTime}`, {
@@ -94,6 +98,7 @@ function getLogsInRange(startTime, endTime) {
     }).catch((err) => console.log(err));
 }
 
+// runs when "get logs" button is pressed
 function getLogsInRangeHandler(event) {
 
     event.preventDefault();
