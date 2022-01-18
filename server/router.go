@@ -10,6 +10,7 @@ func (s *Server) SetupRoutes() {
 	s.Router.HandleFunc("/api/log/start/", setContentTypeJSON(s.middlewareTokenVerification(s.handleLogStart))).Methods(http.MethodPost)
 	s.Router.HandleFunc("/api/log/stop/", setContentTypeJSON(s.middlewareTokenVerification(s.handleLogEnd))).Methods(http.MethodPut)
 	s.Router.HandleFunc("/api/log/pending", setContentTypeJSON(s.middlewareTokenVerification(s.handleLogsPending))).Methods(http.MethodGet)
+	s.Router.HandleFunc("/api/stats/range", setContentTypeJSON(s.middlewareTokenVerification(s.handleLogsInRange))).Methods(http.MethodGet)
 	s.Router.HandleFunc("/health", setContentTypeJSON(s.showThatIAmAlive))
 	s.Router.Use(setContentTypeFileFormat)
 	s.setupWeb("web")
