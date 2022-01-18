@@ -17,6 +17,7 @@ const (
 	statementUpdateLogsWithIdAndEndTime   = "update logs set endTime = $1 where id = $2 and userId = $3;"
 	statementDeleteUser                   = "delete from users where id = $1;"
 	statementDeleteLog                    = "delete from logs where id = $1;"
+	statementSelectLogsWithRange          = "select * from logs where userId = $1 and startTime >= $2 and endTime <= $3 and endTime != 0;"
 )
 
 // CreateUser will create a new user in the database and will
@@ -90,6 +91,30 @@ func (db *Database) GetPendingLogs(userID string, endTime int64) (*[]entity.Log,
 		}
 		return nil
 	}, userID, endTime)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// GetLogsInRange will fetch all logs for the user within the given range of startTime and endTime.
+func (db *Database) GetLogsInRange(userID string, startTime int64, endTime int64) (*[]entity.Log, error) {
+
+	result := make([]entity.Log, 0)
+	err := db.queryWithTransaction(statementSelectLogsWithRange, func(rows *sql.Rows) error {
+		for rows.Next() {
+
+			var l entity.Log
+			err := rows.Scan(&l.Id, &l.UserId, &l.Latitude, &l.Longitude, &l.Activity, &l.StartTime, &l.EndTime, &l.Notes)
+			if err != nil {
+				return err
+			}
+			result = append(result, l)
+		}
+		return nil
+	}, userID, startTime, endTime)
 
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"math"
 	"os"
 	"reflect"
 	"testing"
@@ -130,6 +131,17 @@ func TestCreateAndGetLogs(t *testing.T) {
 		err = db.UpdateLog(item.UserId, item.Id, 9999)
 		if err != nil {
 			log.Fatal(err)
+		}
+
+		another, err := db.GetLogsInRange(u.Id, 0, math.MaxInt64)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if (*another)[0] != item {
+			log.Println(item)
+			log.Println((*another)[0])
+			log.Fatal("Inequality")
 		}
 
 		got, err = db.GetPendingLogs(u.Id, item.EndTime)

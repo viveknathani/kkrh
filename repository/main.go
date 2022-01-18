@@ -31,6 +31,9 @@ type logRepository interface {
 	// given endTime.
 	GetPendingLogs(userID string, endTime int64) (*[]entity.Log, error)
 
+	// GetLogsInRange will fetch all logs for the user within the given range of startTime and endTime.
+	GetLogsInRange(userID string, startTime int64, endTime int64) (*[]entity.Log, error)
+
 	// DeleteLog will delete a user specified by logId.
 	DeleteLog(id string) error
 }
