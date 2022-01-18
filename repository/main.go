@@ -27,9 +27,9 @@ type logRepository interface {
 	// endTime.
 	UpdateLog(userID string, logId string, endTime int64) error
 
-	// GetLogs will fetch all logs for the user where stopTime matches the
+	// GetPendingLogs will fetch all logs for the user where stopTime matches the
 	// given endTime.
-	GetLogs(userID string, endTime int64) (*[]entity.Log, error)
+	GetPendingLogs(userID string, endTime int64) (*[]entity.Log, error)
 
 	// DeleteLog will delete a user specified by logId.
 	DeleteLog(id string) error

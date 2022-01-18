@@ -58,7 +58,7 @@ func (service *Service) EndLog(ctx context.Context, userId string, id string, en
 func (service *Service) GetPendingLogs(ctx context.Context, userId string) (*[]entity.Log, error) {
 
 	service.Logger.Info("database: fetch logs start.", zapReqID(ctx))
-	list, err := service.Repo.GetLogs(userId, 0) // 0 signifies pending
+	list, err := service.Repo.GetPendingLogs(userId, 0) // 0 signifies pending
 	if err != nil {
 		service.Logger.Error(err.Error(), zapReqID(ctx))
 		return nil, ErrNoLogFetch

@@ -115,7 +115,7 @@ func TestCreateAndGetLogs(t *testing.T) {
 			log.Fatal(err)
 		}
 
-		got, err := db.GetLogs(u.Id, item.EndTime)
+		got, err := db.GetPendingLogs(u.Id, item.EndTime)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -132,7 +132,7 @@ func TestCreateAndGetLogs(t *testing.T) {
 			log.Fatal(err)
 		}
 
-		got, err = db.GetLogs(u.Id, item.EndTime)
+		got, err = db.GetPendingLogs(u.Id, item.EndTime)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -73,9 +73,9 @@ func (db *Database) UpdateLog(userID string, logId string, endTime int64) error 
 	return err
 }
 
-// GetLogs will fetch all logs for the user where stopTime matches the
+// GetPendingLogs will fetch all logs for the user where stopTime matches the
 // given endTime.
-func (db *Database) GetLogs(userID string, endTime int64) (*[]entity.Log, error) {
+func (db *Database) GetPendingLogs(userID string, endTime int64) (*[]entity.Log, error) {
 
 	result := make([]entity.Log, 0)
 	err := db.queryWithTransaction(statementSelectLogsFromUserAndEndTime, func(rows *sql.Rows) error {
