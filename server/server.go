@@ -55,5 +55,5 @@ func showRequestMetaData(l *zap.Logger, r *http.Request) {
 
 func showRequestEnd(l *zap.Logger, r *http.Request) {
 
-	l.Info("complrted processing", zapReqID(r))
+	l.Info("completed processing", zapReqID(r))
 }
