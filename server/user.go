@@ -13,13 +13,12 @@ import (
 
 func (s *Server) handleSignup(w http.ResponseWriter, r *http.Request) {
 
-	if ok := sendClientError(w, "i wish you could do that"); ok != nil {
-		s.Service.Logger.Error(ok.Error(), zapReqID(r))
+	if true {
+		if ok := sendClientError(w, "i wish you could go further"); ok != nil {
+			s.Service.Logger.Error(ok.Error(), zapReqID(r))
+		}
+		return
 	}
-	return
-}
-
-func (s *Server) handleSignupThatWorks(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	var u userSignupRequest
