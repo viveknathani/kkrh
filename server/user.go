@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/viveknathani/kkrh/entity"
@@ -102,7 +103,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   int(time.Hour.Seconds() * 24 * 3),
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
-		Secure:   true,
+		Secure:   (os.Getenv("MODE") == "prod"),
 	})
 
 	if ok := sendResponse(w, "ok", http.StatusOK); ok != nil {
