@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/viveknathani/kkrh/cache"
 	"github.com/viveknathani/kkrh/database"
@@ -14,6 +17,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// Hold environment variables
 var (
 	port           string = ""
 	databaseServer string = ""
@@ -23,6 +27,7 @@ var (
 	jwtSecret      string = ""
 )
 
+// Setup environment variables
 func init() {
 
 	mode := os.Getenv("MODE")
@@ -32,24 +37,22 @@ func init() {
 		databaseServer = os.Getenv("DEV_DATABASE_URL")
 		redisServer = os.Getenv("DEV_REDIS_URL")
 		jwtSecret = os.Getenv("DEV_JWT_SECRET")
-	} else if mode == "prod" {
+		fmt.Println("here")
+	}
+
+	if mode == "prod" {
 		port = os.Getenv("PORT")
 		databaseServer = os.Getenv("DATABASE_URL")
 		redisServer = os.Getenv("REDIS_URL")
 		redisUsername = os.Getenv("REDIS_USERNAME")
 		redisPassword = os.Getenv("REDIS_PASSWORD")
 		jwtSecret = os.Getenv("JWT_SECRET")
-	} else {
-		port = "8080"
-		databaseServer = "postgres://viveknathani:root@localhost:5432/kkrhdb"
-		redisServer = "127.0.0.1:6379"
-		jwtSecret = "hey"
 	}
 }
 
-func main() {
+// getLogger will configure and return a uber/zap logger
+func getLogger() *zap.Logger {
 
-	// Setup logger
 	cfg := zap.Config{
 		Encoding:         "json",
 		Level:            zap.NewAtomicLevel(),
@@ -63,24 +66,43 @@ func main() {
 			EncodeTime:  zapcore.EpochMillisTimeEncoder,
 		},
 	}
+
 	logger, err := cfg.Build()
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)
 	}
 
-	// Setup database
+	return logger
+}
+
+// getDatabase will init and return a db
+func getDatabase() *database.Database {
+
 	db := &database.Database{}
-	err = db.Initialize(databaseServer)
+	err := db.Initialize(databaseServer)
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)
 	}
 
-	// Setup cache
+	return db
+}
+
+// getCache will return a connection to Redis from the pool
+func getCache() (*cache.Cache, redis.Conn) {
+
 	memory := &cache.Cache{}
 	memory.Initialize(redisServer, redisUsername, redisPassword)
 	memoryConn := memory.Pool.Get()
+	return memory, memoryConn
+}
+
+func main() {
+
+	logger := getLogger()
+	db := getDatabase()
+	memory, memoryConn := getCache()
 
 	// Setup the web server
 	srv := &server.Server{
@@ -92,20 +114,44 @@ func main() {
 		},
 		Router: mux.NewRouter(),
 	}
-
 	srv.SetupRoutes()
 
-	// HSTS
-	hsts := server.NewSecurityHandler(srv)
+	var secureHandler *server.SecurityHandler = nil
 
-	// Listen
-	err = http.ListenAndServe(":"+port, hsts)
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
+	// middleware for better HTTP headers
+	if os.Getenv("MODE") == "prod" {
+		secureHandler = server.NewSecurityHandler(srv)
 	}
 
-	err = srv.Service.Conn.Close()
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	// Listen
+	go func() {
+
+		if secureHandler != nil {
+
+			err := http.ListenAndServe(":"+port, secureHandler)
+			if err != nil {
+				fmt.Print(err)
+				os.Exit(1)
+			}
+		} else {
+			err := http.ListenAndServe(":"+port, srv)
+			if err != nil {
+				fmt.Print(err)
+				os.Exit(1)
+			}
+		}
+	}()
+	fmt.Println("Server started!")
+	<-done
+	shutdown(srv, db, memory)
+}
+
+func shutdown(srv *server.Server, db *database.Database, memory *cache.Cache) {
+
+	err := srv.Service.Conn.Close()
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -117,8 +163,5 @@ func main() {
 	if err != nil {
 		fmt.Print(err)
 	}
-	err = srv.Service.Logger.Sync()
-	if err != nil {
-		fmt.Print(err)
-	}
+	fmt.Println("goodbye!")
 }
