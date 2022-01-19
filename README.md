@@ -1,6 +1,6 @@
 # kkrh
 
-kkrh is a web application for tracking time. I use it in my daily life to understand my habits better and get insights out of them. Hence the name is an abbreviation of the Hindi sentence "kya kar raha hai".
+kkrh is a web application for tracking my activities. I use it in my daily life to understand my habits better and get insights out of them. Hence the name is an abbreviation of the Hindi sentence "kya kar raha hai".
 
 ## why not just use something that already exists?
 
