@@ -17,6 +17,11 @@ button:hover {
 
 input {
     font-size: larger;
+    background: none;
+    color: white;
+    border-left: none;
+    border-right: none;
+    border-top: none;
 }
 
 #container {
