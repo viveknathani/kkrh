@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>stats</title>
     <link rel="stylesheet" href="/web/css/stats.css" type="text/css">
-    <script src="/web/scripts/stats.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js" integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="/web/scripts/stats.js"></script>
 </head>
 <body>
     <form>
         <input type="date" id="stats-start"> to <input type="date" id="stats-end">
         <button id="stats-submit" type="submit">get logs</button>
     </form>
-    <canvas id="board"></canvas>
+    <table>
+        <tr>
+            <td>
+                <canvas width="100%" height="100%" id="board"></canvas>
+            </td>
+        </tr>
+      </table>
 </body>
 </html>

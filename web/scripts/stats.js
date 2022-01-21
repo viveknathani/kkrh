@@ -1,52 +1,3 @@
-class PieChart {
-
-    constructor(canvas, data, colors) {
-        this.canvas = canvas;
-        this.data = data;
-        this.colors = colors;
-    }
-
-    drawPieSlice(ctx, startAngle, endAngle, color, text) {
-        
-        let centerX = 150;
-        let centerY = 150;
-        let radius = 150;
-
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(centerX,centerY);
-        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fill();
-
-        let labelText = text;
-        let labelX = (this.canvas.width / 2) + (radius / 2) * Math.cos(startAngle + (endAngle - startAngle) / 2);
-        let labelY = (this.canvas.height / 2) + (radius / 2) * Math.sin(startAngle + (endAngle - startAngle) / 2);
-        ctx.fillStyle = "white";
-        ctx.font = "bold 10px Arial";
-        ctx.fillText(labelText, labelX, labelY);
-    }
-
-    draw() {
-
-        const ctx = this.canvas.getContext("2d");
-        let startAngle = 0;
-        for (let i = 0; i < this.data.length; ++i) {
-            const angle = 2 * Math.PI * this.data[i].timeSpent / 100.0;
-            this.drawPieSlice(ctx, startAngle, startAngle + angle, this.colors[i % this.colors.length], i.toString());
-            startAngle += angle;
-            addParagraph(`${i.toString()}:${this.data[i].activity}`);
-        }
-    }
-}
-
-function addParagraph(text) {
-    let body = document.getElementsByTagName('body')[0];
-    let p = document.createElement('p');
-    p.innerText = text;
-    body.appendChild(p);
-} 
-
 function getById(id) { 
     return document.getElementById(id); 
 }
@@ -55,7 +6,7 @@ function getById(id) {
 function prepareAndSendForDrawing(store, totalSeconds) {
 
     let arr = [];
-    let colors = ["#FF6633", "#FFB399", "#FF33FF", "#FFFF99", "#00B3E6", "#E6B333",
+    let colorSet = ["#FF6633", "#FFB399", "#FF33FF", "#FFFF99", "#00B3E6", "#E6B333",
     "#3366E6", "#999966", "#809980", "#E6FF80", "#1AFF33", "#999933", "#FF3380",
     "#CCCC00", "#66E64D", "#4D80CC", "#FF4D4D", "#99E6E6", "#6666FF" ];
     
@@ -67,11 +18,17 @@ function prepareAndSendForDrawing(store, totalSeconds) {
     });
     arr.push({activity: 'unrecorded', timeSpent: 100 - sum });
 
-    let board = getById("board");
-    board.width = 300;
-    board.height = 300;
-    let pie = new PieChart(board, arr, colors)
-    pie.draw();
+    let labels = [];
+    let colors = [];
+    let data = [];
+
+    for (let i = 0; i < arr.length; ++i) {
+        labels.push(arr[i].activity);
+        data.push(arr[i].timeSpent);
+        colors.push(colorSet[i % colorSet.length]);
+    }
+
+    makePieChart(labels, data, colors);
 }
 
 // make the API call and send data for drawing
@@ -107,6 +64,44 @@ function getLogsInRangeHandler(event) {
     let startTime = Date.parse(startDate)/1000;
     let endTime = Date.parse(endDate)/1000;
     getLogsInRange(startTime, endTime);
+}
+
+function makePieChart(labels, store, colors) {
+
+    let chartStatus = Chart.getChart("board"); 
+    if (chartStatus != undefined) {
+        chartStatus.destroy();
+    }
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'pie chart',
+            data: store,
+            backgroundColor: colors,
+            hoverOffset: 4
+        }],
+    };
+    const config = {
+        type: 'pie',
+        aspectRatio: 1,
+        data: data,
+        options: {
+            responsive: true,
+            radius: 150,
+            legend: {
+                display: true,
+                position: "bottom",
+                labels: {
+                  fontColor: "white",
+                  fontSize: 16
+                }    
+            },
+        },
+    };
+    const board = getById("board");
+    const ctx = board.getContext("2d");
+    const myPie = new Chart(ctx, config);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
