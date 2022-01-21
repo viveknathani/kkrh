@@ -12,6 +12,8 @@ function fetchLogs() {
         if (data.message == "not authenticated") {
             getById("message").style.display = 'block';
             getById("content").style.display = 'none';
+            getById("pending-message").style.display = 'none';
+            localStorage.setItem("isAuthenticated", "false")
         } else {
             if (data.length === 0) {
                 getById("pending-message").innerText = 'you have no pending logs';
