@@ -43,7 +43,7 @@ func isHTTPS(r *http.Request) bool {
 func (hsts *SecurityHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("X-Frame-Options", "DENY")
-	w.Header().Add("Content-Security-Policy", "default-src 'self' https://cdnjs.cloudflare.com/ajax/libs/Chart.js")
+	w.Header().Add("Content-Security-Policy", "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js")
 	w.Header().Add("X-Content-Type-Options", "nosniff")
 	if isHTTPS(r) {
 		w.Header().Add("Strict-Transport-Security", createHSTSHeaderValue())
