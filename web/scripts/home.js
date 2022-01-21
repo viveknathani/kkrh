@@ -1,3 +1,5 @@
+import { getTotalTime } from "./common.js";
+
 function getById(id) { 
     return document.getElementById(id); 
 }
@@ -111,15 +113,7 @@ function calculateTimeElapsed(startTime) {
     // factor in 1000 to convert to milliseconds as it works for the Date object
     startTime = startTime * 1000;
     const elapsed = (new Date().getTime() - startTime) / 1000;
-    let hours   = Math.floor((elapsed / 3600) % 24);
-    let minutes = Math.floor((elapsed / 60) % 60);
-    let seconds = Math.floor(elapsed % 60);
-
-    // append a '0' if value is less than 10
-    (hours < 10) ? hours = '0' + hours.toString() : hours.toString();
-    (minutes < 10) ? minutes = '0' + minutes.toString() : minutes.toString();
-    (seconds < 10) ? seconds = '0' + seconds.toString() : seconds.toString();
-    return `${hours}:${minutes}:${seconds}`;
+    return getTotalTime(elapsed);
 }
 
 function applyStyleToTableOrRow(element) {

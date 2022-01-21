@@ -20,6 +20,10 @@ table {
     border: 1px solid white;
 }
 
+canvas {
+    color: white;
+}
+
 button:hover {
     cursor: pointer;
 }

@@ -1,3 +1,5 @@
+import { getTotalTime } from "./common.js";
+
 function getById(id) { 
     return document.getElementById(id); 
 }
@@ -16,6 +18,7 @@ function prepareAndSendForDrawing(store, totalSeconds) {
         sum += temp;
         arr.push({ activity: key, timeSpent: temp });
     });
+    store.set('unrecorded', (100.0 - sum) * totalSeconds / 100.0)
     arr.push({activity: 'unrecorded', timeSpent: 100 - sum });
 
     let labels = [];
@@ -23,7 +26,7 @@ function prepareAndSendForDrawing(store, totalSeconds) {
     let data = [];
 
     for (let i = 0; i < arr.length; ++i) {
-        labels.push(arr[i].activity);
+        labels.push(`${arr[i].activity}(${getTotalTime(store.get(arr[i].activity))})`);
         data.push(arr[i].timeSpent);
         colors.push(colorSet[i % colorSet.length]);
     }
