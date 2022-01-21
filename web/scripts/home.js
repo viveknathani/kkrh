@@ -39,10 +39,10 @@ function startLog(event) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (postion) {
 
-            latitude = postion.coords.latitude;
-            longitude = postion.coords.longitude;
-            activity = getById("start-activity").value;
-            notes = getById("start-notes").value;
+            const latitude = postion.coords.latitude;
+            const longitude = postion.coords.longitude;
+            const activity = getById("start-activity").value;
+            const notes = getById("start-notes").value;
 
             const endpoint = "/api/log/start/"
             fetch(endpoint, {
